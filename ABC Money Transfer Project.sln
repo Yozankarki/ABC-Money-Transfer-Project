@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoneyTransfer.Application",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoneyTransfer.Infrastructure", "MoneyTransfer.Infrastructure\MoneyTransfer.Infrastructure.csproj", "{734BF56D-86D8-49F6-AF81-CE9B50AC9B0B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoneyTransfer.Shared", "MoneyTransfer.Shared\MoneyTransfer.Shared.csproj", "{08E81CB0-63F4-4FD1-BA2C-7642921DE6B3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{734BF56D-86D8-49F6-AF81-CE9B50AC9B0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{734BF56D-86D8-49F6-AF81-CE9B50AC9B0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{734BF56D-86D8-49F6-AF81-CE9B50AC9B0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08E81CB0-63F4-4FD1-BA2C-7642921DE6B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08E81CB0-63F4-4FD1-BA2C-7642921DE6B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08E81CB0-63F4-4FD1-BA2C-7642921DE6B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08E81CB0-63F4-4FD1-BA2C-7642921DE6B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

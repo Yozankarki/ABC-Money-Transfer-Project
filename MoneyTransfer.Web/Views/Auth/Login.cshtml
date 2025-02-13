@@ -1,0 +1,32 @@
+﻿@model MoneyTransfer.Shared.DTOs.LoginDto
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="row">
+    <div class="col-10 mx-auto">
+        <h1>Login</h1>
+        <hr />
+        <form asp-action="Login" asp-controller="Auth" method="post">
+            <input type="hidden" value="@ViewBag.ReturnUrl" name="returnURL" />
+            <div class="mb-3">
+                <label asp-for="Email"></label>
+                <input type="text" asp-for="Email" class="form-control" />
+                <span class="text-danger" asp-validation-for="Email"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Password"></label>
+                <input type="password" asp-for="Password" class="form-control" />
+                <span class="text-danger" asp-validation-for="Password"></span>
+            </div>
+            <div class="mb-3">
+                <input type="checkbox" asp-for="RememberMe" />
+                <label asp-for="RememberMe"></label>
+                <span class="text-danger" asp-validation-for="RememberMe"></span>
+            </div>
+            <div class="mb-3">
+                <input type="submit" class="form-control btn btn-success" value="Login" />
+            </div>
+        </form>
+    </div>
+</div>

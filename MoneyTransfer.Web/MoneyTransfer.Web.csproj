@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.13" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -15,7 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MoneyTransfer.Application\MoneyTransfer.Application.csproj" />
+    <ProjectReference Include="..\MoneyTransfer.Domain\MoneyTransfer.Domain.csproj" />
     <ProjectReference Include="..\MoneyTransfer.Infrastructure\MoneyTransfer.Infrastructure.csproj" />
+    <ProjectReference Include="..\MoneyTransfer.Shared\MoneyTransfer.Shared.csproj" />
   </ItemGroup>
 
 </Project>
