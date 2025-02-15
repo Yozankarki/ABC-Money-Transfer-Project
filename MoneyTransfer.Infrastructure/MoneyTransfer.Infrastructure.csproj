@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MoneyTransfer.Application\MoneyTransfer.Application.csproj" />
     <ProjectReference Include="..\MoneyTransfer.Domain\MoneyTransfer.Domain.csproj" />
     <ProjectReference Include="..\MoneyTransfer.Shared\MoneyTransfer.Shared.csproj" />
   </ItemGroup>

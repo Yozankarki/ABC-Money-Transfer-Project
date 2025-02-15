@@ -1,0 +1,105 @@
+﻿@model MoneyTransfer.Shared.DTOs.AccountDto
+
+@{
+    ViewData["Title"] = "Transaction Page";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 200px;">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+                <span class="fs-4">Sidebar</span>
+            </a>
+            <hr>
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "Transaction")" class="nav-link active" aria-current="page">
+                        Home
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("NewAccount", "Transaction")" class="nav-link text-white">
+                        Create account
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Transfer", "Transaction")" class="nav-link text-white">
+                        Transfer Money
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("TransactionList", "Transaction")" class="nav-link text-white">
+                        Transaction List
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("UpdateProfile", "Transaction")" class="nav-link text-white">
+                        Update Profile
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Logout", "Auth")" class="nav-link text-white">
+                        Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+            <h1 class="h2">Create New Account</h1>
+
+            <!-- Display error messages -->
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger">
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <p>@error.ErrorMessage</p>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="row">
+                    <form asp-action="NewAccount" method="post">
+                        <!-- Form fields for account creation -->
+                        <div class="form-group">
+                            <label asp-for="UserName" class="control-label"></label>
+                            <input asp-for="UserName" class="form-control" disabled />
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="CurrencyCode" class="control-label"></label>
+                            <select asp-for="CurrencyCode" class="form-control">
+                                <option value="NPR">NPR</option>
+                                <option value="MYR">MYR</option>
+                            </select>
+                            <span asp-validation-for="CurrencyCode" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Balance" class="control-label"></label>
+                            <input asp-for="Balance" class="form-control" />
+                            <span asp-validation-for="Balance" class="text-danger"></span>
+                        </div>
+
+                        <input asp-for="UserId" class="form-control" type="hidden" />
+                        <input asp-for="AccountNumber" class="form-control" type="hidden" />
+                        <input asp-for="LastUpdatedBy" class="form-control" type="hidden" />
+
+                        <div class="form-group">
+                            <input type="submit" value="Create" class="btn btn-primary" />
+                        </div>
+                    </form>
+
+                    <div>
+                        <a asp-action="Index">Back to List</a>
+                    </div>
+                </div>
+            }
+        </main>
+    </div>
+</div>

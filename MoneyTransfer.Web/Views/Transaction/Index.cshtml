@@ -1,0 +1,130 @@
+﻿@model MoneyTransfer.Shared.DTOs.UserDashBoradDto
+@{
+    ViewData["Title"] = "Transaction Page";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 200px;">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+                <span class="fs-4">Sidebar</span>
+            </a>
+            <hr>
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "Transaction")" class="nav-link active" aria-current="page">
+                        Home
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("NewAccount", "Transaction")" class="nav-link text-white">
+                        Create account
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Transfer", "Transaction")" class="nav-link text-white">
+                        Transfer Money
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("TransactionList", "Transaction")" class="nav-link text-white">
+                        Transaction List
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("UpdateProfile", "Transaction")" class="nav-link text-white">
+                        Update Profile
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Logout", "Auth")" class="nav-link text-white">
+                        Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+            <h1 class="h2">Dashboard</h1>
+            <div class="row">
+                <!-- Earnings (Monthly) Card Example -->
+                <div class="mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            @if (string.IsNullOrEmpty(Model.Account.UserName))
+                            {
+                                <div class="row no-gutters align-items-center alert alert-danger">
+                                    <span>Please create an account first.</span>
+                                </div>
+                            }else{
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">User Name</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.FullName</div>
+                                    </div>
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Address</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Address</div>
+                                    </div>
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Account Number</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Account.AccountNumber</div>
+                                    </div>
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Balance</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">(@Model.Account.CurrencyCode):  @Model.Account.Balance</div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Exchange Rates List -->
+            <div class="mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Rates</div>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Currency</th>
+                                            <th>Buy Rate</th>
+                                            <th>Sell Rate</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.Rates != null && Model.Rates.Any())
+                                        {
+                                            @foreach (var rate in Model.Rates)
+                                            {
+                                                <tr>
+                                                    <td>@rate.Currency?.Iso3 - @rate.Currency?.Name (@rate.Currency?.Unit)</td>
+                                                    <td>@rate.Buy</td>
+                                                    <td>@rate.Sell</td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="3">No exchange rates available.</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+    </main>
+</div>
+</div>

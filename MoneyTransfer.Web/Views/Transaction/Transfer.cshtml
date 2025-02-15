@@ -1,0 +1,132 @@
+﻿@model MoneyTransfer.Shared.DTOs.TransactionRequestDto
+@{
+    ViewData["Title"] = "Transaction Page";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 200px;">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+                <span class="fs-4">Sidebar</span>
+            </a>
+            <hr>
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "Transaction")" class="nav-link active" aria-current="page">
+                        Home
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("NewAccount", "Transaction")" class="nav-link text-white">
+                        Create account
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Transfer", "Transaction")" class="nav-link text-white">
+                        Transfer Money
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("TransactionList", "Transaction")" class="nav-link text-white">
+                        Transaction List
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("UpdateProfile", "Transaction")" class="nav-link text-white">
+                        Update Profile
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Logout", "Auth")" class="nav-link text-white">
+                        Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+            <h1 class="h2">Transfer Money</h1>
+            <div class="row">
+                <div class="container">
+                    <div class="card p-4 shadow-lg">
+                        <form asp-action="Transfer" method="post">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="SenderBalanace" class="form-label">Total Balance</label>
+                                    <input type="text" class="form-control" asp-for="SenderBalanace" disabled>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="ReceiverAccountNumber" class="form-label">Receiver Account Number</label>
+                                    <select asp-for="ReceiverAccountNumber" class="form-select" required>
+                                        <option value="">Select Receiver</option>
+                                        @if (Model.RecipientAccountNumbers != null)
+                                        {
+                                            for (int i = 0; i < Model.RecipientAccountNumbers.Count; i++)
+                                            {
+                                                <option value="@Model.RecipientAccountNumbers[i]">
+                                                    @Model.RecipientNames[i] (@Model.RecipientAccountNumbers[i])
+                                                </option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="TransferAmount" class="form-label">Transfer Amount</label>
+                                    <input asp-for="TransferAmount" class="form-control">
+                                    <span asp-validation-for="TransferAmount" class="text-danger"></span>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="ExchangeRate" class="form-label">MYR Sell Rate</label>
+                                    <input asp-for="ExchangeRate" class="form-control" readonly>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="convertedAmount" class="form-label">Converted Amount (NPR)</label>
+                                <input type="number" class="form-control" id="convertedAmount" name="PayoutAmount" readonly>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100">Transfer</button>
+                            <input asp-for="SenderId" type="hidden" />
+                            <input asp-for="SenderCurrencyCode" type="hidden" value="MYR">
+                        </form>
+                    </div>
+
+                    <div id="messageContainer" class="mt-3"></div>
+                    <div>
+                        <a asp-action="Index">Back to List</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $("#TransferAmount").on("input", function () {
+                var totalBalance = parseFloat($("#SenderBalanace").val()) || 0;
+                var transferAmount = parseFloat($(this).val()) || 0;
+                var exchangeRate = parseFloat($("#ExchangeRate").val()) || 0; 
+
+                if (transferAmount > totalBalance) {
+                    alert("Transfer amount cannot be greater than total balance.");
+                    $(this).val(totalBalance); 
+                    transferAmount = totalBalance;
+                }
+
+                var convertedAmount = transferAmount * exchangeRate;
+                $("#convertedAmount").val(convertedAmount.toFixed(2));
+            });
+        });
+    </script>
+}

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace MoneyTransfer.Domain.Entities
 {
-    public class User: IdentityUser
+    public class Users: IdentityUser
     {
         public required string FirstName { get; set; }
         public string? MiddleName { get; set; }

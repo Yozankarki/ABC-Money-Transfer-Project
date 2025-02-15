@@ -78,7 +78,7 @@ namespace MoneyTransfer.Web.Controllers
                 if (response == null) 
                     return LocalRedirect(returnUrl!);
                 else 
-                    return RedirectToAction(nameof(Index), "Home");
+                    return RedirectToAction(nameof(Index), "Transaction");
             }
             catch (UnauthorizedAccessException ex)
             {

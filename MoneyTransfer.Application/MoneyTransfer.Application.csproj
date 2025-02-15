@@ -9,10 +9,12 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.13" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MoneyTransfer.Domain\MoneyTransfer.Domain.csproj" />
+    <ProjectReference Include="..\MoneyTransfer.Infrastructure\MoneyTransfer.Infrastructure.csproj" />
     <ProjectReference Include="..\MoneyTransfer.Shared\MoneyTransfer.Shared.csproj" />
   </ItemGroup>
 

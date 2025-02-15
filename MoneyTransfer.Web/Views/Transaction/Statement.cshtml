@@ -1,0 +1,137 @@
+﻿@{
+    ViewData["Title"] = "Transaction Page";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 200px;">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+                <span class="fs-4">Sidebar</span>
+            </a>
+            <hr>
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "Transaction")" class="nav-link active" aria-current="page">
+                        Home
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("NewAccount", "Transaction")" class="nav-link text-white">
+                        Create account
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Transfer", "Transaction")" class="nav-link text-white">
+                        Transfer Money
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("TransactionList", "Transaction")" class="nav-link text-white">
+                        Transaction List
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("UpdateProfile", "Transaction")" class="nav-link text-white">
+                        Update Profile
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Logout", "Auth")" class="nav-link text-white">
+                        Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+            <h1 class="h2">Dashboard</h1>
+            <div class="container">
+                <div class="card shadow-lg p-4">
+                    <div class="row">
+                        <!-- Sender Details -->
+                        <div class="col-md-6">
+                            <h5 class="mb-3">Sender Details</h5>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>First Name</th>
+                                    <td>ljnlj</td>
+                                </tr>
+                                <tr>
+                                    <th>Middle Name</th>
+                                    <td>;oljloj</td>
+                                </tr>
+                                <tr>
+                                    <th>Last Name</th>
+                                    <td>lkjnkj</td>
+                                </tr>
+                                <tr>
+                                    <th>Address</th>
+                                    <td>linjj</td>
+                                </tr>
+                                <tr>
+                                    <th>Country</th>
+                                    <td>lkjnlkj</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Receiver Details -->
+                        <div class="col-md-6">
+                            <h5 class="mb-3">Receiver Details</h5>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>First Name</th>
+                                    <td>lkjnljk</td>
+                                </tr>
+                                <tr>
+                                    <th>Middle Name</th>
+                                    <td>ijnik</td>
+                                </tr>
+                                <tr>
+                                    <th>Last Name</th>
+                                    <td>kljhljk</td>
+                                </tr>
+                                <tr>
+                                    <th>Bank Name</th>
+                                    <td>khln</td>
+                                </tr>
+                                <tr>
+                                    <th>Account Number</th>
+                                    <td>51</td>
+                                </tr>
+                                <tr>
+                                    <th>Country</th>
+                                    <td>kj</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Payment Details -->
+                    <h5 class="mb-3 mt-4">Payment Summary</h5>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Transfer Amount (MYR)</th>
+                            <td>10</td>
+                        </tr>
+                        <tr>
+                            <th>Exchange Rate</th>
+                            <td>10</td>
+                        </tr>
+                        <tr>
+                            <th>Payout Amount (NPR)</th>
+                            <td>1000</td>
+                        </tr>
+                    </table>
+
+                    <div class="text-center mt-4">
+                        <a asp-action="Transfer" class="btn btn-primary">Back to Transfer</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>

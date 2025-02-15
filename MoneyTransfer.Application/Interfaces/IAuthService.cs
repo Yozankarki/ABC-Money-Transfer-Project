@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using MoneyTransfer.Domain.Entities;
-using MoneyTransfer.Shared.DTOs;
+﻿using MoneyTransfer.Shared.DTOs;
 
 namespace MoneyTransfer.Application.Interfaces
 {

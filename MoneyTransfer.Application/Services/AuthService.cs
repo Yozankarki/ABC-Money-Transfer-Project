@@ -1,19 +1,16 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Hosting;
 using MoneyTransfer.Application.Interfaces;
 using MoneyTransfer.Domain.Entities;
 using MoneyTransfer.Shared.DTOs;
-using System.Security.Claims;
-using System.Web;
 
 namespace MoneyTransfer.Application.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<Users> _userManager;
+        private readonly SignInManager<Users> _signInManager;
 
-        public AuthService(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AuthService(UserManager<Users> userManager, SignInManager<Users> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -25,10 +22,10 @@ namespace MoneyTransfer.Application.Services
             {
                 var existingUser = await _userManager.FindByNameAsync(model.FirstName);
                 var existingEmail = await _userManager.FindByEmailAsync(model.Email);
-                if (existingUser != null) return Result<string>.Failure(new List<string> { "User Name already exists." });
-                if (existingEmail != null) return Result<string>.Failure(new List<string> { "Email already registered." });
+                if (existingUser != null) return Result<string>.Failure("User Name already exists.");
+                if (existingEmail != null) return Result<string>.Failure("Email already registered.");
 
-                var user = new User {
+                var user = new Users {
                     FirstName = model.FirstName,
                     MiddleName = model.MiddleName,
                     LastName = model.LastName,
@@ -42,7 +39,7 @@ namespace MoneyTransfer.Application.Services
                 }
                 else
                 {
-                    return Result<string>.Failure(result.Errors.Select(e => e.Description).ToList());
+                    return Result<string>.Failure("Error occurred.");
                 }
             }
             catch (Exception ex)

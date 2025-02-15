@@ -1,0 +1,88 @@
+﻿@{
+    ViewData["Title"] = "Transaction List";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 200px;">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+                <span class="fs-4">Sidebar</span>
+            </a>
+            <hr>
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "Transaction")" class="nav-link active" aria-current="page">
+                        Home
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("NewAccount", "Transaction")" class="nav-link text-white">
+                        Create account
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Transfer", "Transaction")" class="nav-link text-white">
+                        Transfer Money
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("TransactionList", "Transaction")" class="nav-link text-white">
+                        Transaction List
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("UpdateProfile", "Transaction")" class="nav-link text-white">
+                        Update Profile
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Logout", "Auth")" class="nav-link text-white">
+                        Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+            <h1 class="h2">Dashboard</h1>
+            <div class="container">
+                <table class="table table-striped table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Date</th>
+                            <th>Sender Name</th>
+                            <th>Receiver Name</th>
+                            <th>Sent (MYR)</th>
+                            <th>Received (NPR)</th>
+                            <th>Type</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @* @foreach (var transaction in ViewBag.Transactions)
+                        { *@
+                            <tr>
+                                <td>CreatedAt</td>
+                                <td>Sender.FirstName</td>
+                                <td>Receiver.FirstName</td>
+                                <td>TransferAmount</td>
+                                <td>ConvertedAmount</td>
+                                <td>
+                                  @*   <span class="badge @(transaction.TransactionType == "Debit" ? "bg-danger" : "bg-success")">
+                                        @transaction.TransactionType
+                                    </span> *@
+                                </td>
+                                <td>
+                                <a asp-action="Statement" class="btn btn-primary btn-sm">View</a>
+                                </td>
+                            </tr>
+                        @* } *@
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>

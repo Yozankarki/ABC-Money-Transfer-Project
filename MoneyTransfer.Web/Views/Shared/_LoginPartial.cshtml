@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using MoneyTransfer.Domain.Entities
-@inject SignInManager<User> SignInManager
-@inject UserManager<User> UserManager
+@inject SignInManager<Users> SignInManager
+@inject UserManager<Users> UserManager
 
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))

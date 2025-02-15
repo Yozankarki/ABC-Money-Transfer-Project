@@ -15,12 +15,10 @@
             Data = data;
         }
 
-        // Success methods
         public static Result<T> Success(string message) => new Result<T>(true, message, new List<string>(), default!);
-        public static Result<T> Success(string message, T data) => new Result<T>(true, message, new List<string>(), data);
+        public static Result<T> Success(T data) => new Result<T>(true, "Operation successful", new List<string>(), data);
 
-        // Failure methods
+        // Failure
         public static Result<T> Failure(string message) => new Result<T>(false, message, new List<string>(), default!);
-        public static Result<T> Failure(List<string> errors) => new Result<T>(false, "Operation failed", errors, default!);
     }
 }
