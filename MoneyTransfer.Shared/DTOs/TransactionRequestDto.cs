@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public string SenderId { get; set; }
-        public decimal SenderBalanace { get; set; }
+        public decimal SenderBalance { get; set; }
         public int ReceiverAccountNumber { get; set; }
         public int TransferAmount { get; set; }
         public decimal ExchangeRate  { get; set; }

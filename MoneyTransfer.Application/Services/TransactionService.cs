@@ -208,7 +208,7 @@ namespace MoneyTransfer.Application.Services
                 var transaction = new TransactionRequestDto
                 {
                     SenderId = senderId,
-                    SenderBalanace = senderBalance,
+                    SenderBalance = senderBalance,
                     ReceiverAccountNumber = 0,
                     TransferAmount = 0,
                     ExchangeRate = decimal.Parse(sellValue!),
@@ -362,6 +362,54 @@ namespace MoneyTransfer.Application.Services
                     await transaction.RollbackAsync();
                     return Result<Transaction>.Failure($"An error occurred while adding transaction: {ex.Message}");
                 }
+        }
+
+        public async Task<List<TransactionListDto>> GetTransactionsAsync()
+        {
+            var transactions = await _transactionService.GetAll()
+                .Include(t => t.Sender)
+                .Include(t => t.Receiver)
+                .OrderByDescending(t => t.CreatedAt)
+                .ToListAsync();
+
+            var transactionDtos = transactions.Select(t => new TransactionListDto
+            {
+                Id = t.Id,
+                SenderId = t.SenderId,
+                CreatedAt = t.CreatedAt ?? DateTime.Now,
+                SenderName = t.Sender.FirstName + t.Sender.MiddleName + t.Sender.LastName,
+                ReceiverName = t.Receiver.FirstName + t.Receiver.MiddleName + t.Receiver.LastName,
+                TransferAmount = t.TransferAmount,
+                ConvertedAmount = t.ConvertedAmount,
+                TransactionType = t.TransactionType
+            }).ToList();
+
+            return transactionDtos;
+        }
+
+        public async Task<TransactionListDto> GetTransactionByIdAsync(int id)
+        {
+            var transaction = await _transactionService.GetAll()
+                .Include(t => t.Sender)
+                .Include(t => t.Receiver)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (transaction == null)
+            {
+                return null;
+            }
+
+            return new TransactionListDto
+            {
+                Id = transaction.Id,
+                SenderId = transaction.SenderId,
+                CreatedAt = transaction.CreatedAt ?? DateTime.Now,
+                SenderName = transaction.Sender.FirstName + " " + transaction.Sender.LastName,
+                ReceiverName = transaction.Receiver.FirstName + " " + transaction.Receiver.LastName,
+                TransferAmount = transaction.TransferAmount,
+                ConvertedAmount = transaction.ConvertedAmount,
+                TransactionType = transaction.TransactionType
+            };
         }
 
     }

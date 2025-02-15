@@ -14,6 +14,7 @@ namespace MoneyTransfer.Application.Interfaces
         Task<Result<TransactionRequestDto>> SendTransaction(TransactionRequestDto model);
         Task<Result<AccountDto>> UpdateUserBalanceAsync(string userId, decimal amount);
         Task<Result<Transaction>> AddTransaction(Transaction model);
-
+        Task<List<TransactionListDto>> GetTransactionsAsync();
+        Task<TransactionListDto> GetTransactionByIdAsync(int id);
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MoneyTransfer.Application.Interfaces;
+using MoneyTransfer.Application.Services;
 using MoneyTransfer.Shared.DTOs;
 using System.Security.Claims;
 
@@ -117,14 +118,22 @@ namespace MoneyTransfer.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult TransactionList()
+        public async Task<IActionResult> TransactionList()
         {
-            return View();
+            var transactions = await _TransactionService.GetTransactionsAsync();
+            return View(transactions); 
         }
+
         [HttpGet]
-        public IActionResult Statement()
+        public async Task<IActionResult> Statement(int id)
         {
-            return View();
+            var transaction = await _TransactionService.GetTransactionByIdAsync(id);
+            if (transaction == null)
+            {
+                return NotFound();
+            }
+
+            return View(transaction);
         }
         [HttpGet]
         public IActionResult UpdateProfile()
