@@ -134,7 +134,7 @@ namespace MoneyTransfer.Application.Services
             }
             catch (Exception ex)
             {
-                return Result<ExchangeRate>.Failure("An error occurred while fetching exchange rates.");
+                return Result<ExchangeRate>.Failure($"No exchange rate data available for MYR.{ex.Message}");
             }
         }
 
@@ -228,89 +228,109 @@ namespace MoneyTransfer.Application.Services
 
         public async Task<Result<TransactionRequestDto>> SendTransaction(TransactionRequestDto model)
         {
-            using (var transaction = await _accountService.BeginTransactionAsync())
-                try
+            var strategy = await _accountService.BeginExecutionAsync();
+
+            Result<TransactionRequestDto> result = Result<TransactionRequestDto>.Failure("Unknown error occurred.");
+
+            await strategy.ExecuteAsync(async () =>
+            {
+                await using (var transaction = await _accountService.BeginTransactionAsync())
                 {
-                    var account = await _accountService.GetAll().Include(a => a.User).ToListAsync();
-
-                    var senderDetails = account.Where(x => x.UserId == model.SenderId).FirstOrDefault();
-                    var receiverDetails = account.Where(x => x.AccountNumber == model.ReceiverAccountNumber).FirstOrDefault();
-
-                    var senderId = account.Where(x => x.UserId == model.SenderId).FirstOrDefault().UserId;
-                    var receiverAccountNo = account.Where(x => x.AccountNumber == model.ReceiverAccountNumber).FirstOrDefault().AccountNumber;
-                    var receiverId = account.Where(x => x.AccountNumber == receiverAccountNo).FirstOrDefault().UserId;
-
-                    var senderTotalBalance = senderDetails.Balance;
-                    var receiverTotalBalance = receiverDetails.Balance;
-
-                    if (account == null || senderId == null || receiverId == null)
+                    try
                     {
-                        await transaction.RollbackAsync();
-                        return Result<TransactionRequestDto>.Failure("Account not found.");
+                        var account = await _accountService.GetAll().Include(a => a.User).ToListAsync();
+
+                        if (account == null || !account.Any())
+                        {
+                            await transaction.RollbackAsync();
+                            return Result<TransactionRequestDto>.Failure("No accounts found.");
+                        }
+
+                        var senderDetails = account.FirstOrDefault(x => x.UserId == model.SenderId);
+                        var receiverDetails = account.FirstOrDefault(x => x.AccountNumber == model.ReceiverAccountNumber);
+
+                        if (senderDetails == null || receiverDetails == null)
+                        {
+                            await transaction.RollbackAsync();
+                            return Result<TransactionRequestDto>.Failure("Sender or receiver account not found.");
+                        }
+
+                        var senderId = senderDetails.UserId;
+                        var receiverAccountNo = receiverDetails.AccountNumber;
+                        var receiverId = receiverDetails.UserId;
+
+                        if (senderId == null || receiverId == null)
+                        {
+                            await transaction.RollbackAsync();
+                            return Result<TransactionRequestDto>.Failure("Sender or receiver ID not found.");
+                        }
+
+                        var senderTotalBalance = senderDetails.Balance;
+                        var receiverTotalBalance = receiverDetails.Balance;
+
+                        if (senderTotalBalance == 0 || senderTotalBalance < model.TransferAmount)
+                        {
+                            await transaction.RollbackAsync();
+                            return Result<TransactionRequestDto>.Failure("Insufficient balance.");
+                        }
+
+                        var senderCurrencyCode = senderDetails.CurrencyCode;
+                        var receiverCurrencyCode = receiverDetails.CurrencyCode;
+
+                        if (receiverCurrencyCode != "NPR")
+                        {
+                            await transaction.RollbackAsync();
+                            return Result<TransactionRequestDto>.Failure("User cannot send funds to this currency.");
+                        }
+
+                        var convertedAmount = model.ExchangeRate * model.TransferAmount;
+                        if (model.PayoutAmount > convertedAmount || convertedAmount != model.PayoutAmount)
+                        {
+                            await transaction.RollbackAsync();
+                            return Result<TransactionRequestDto>.Failure("Insufficient balance or invalid payout amount.");
+                        }
+
+                        // Create Transaction Entry
+                        var newTransaction = new Transaction
+                        {
+                            SenderId = senderId.ToString(),
+                            ReceiverId = receiverId.ToString(),
+                            TransferAmount = model.TransferAmount,
+                            CurrencyCode = "NPR",
+                            ExchangeRate = model.ExchangeRate,
+                            ConvertedAmount = convertedAmount,
+                            TransactionType = "Transfer",
+                            TransactionStatus = "Completed",
+                            CreatedAt = DateTime.UtcNow
+                        };
+                        await _transactionService.AddAsync(newTransaction);
+                        model.Id = newTransaction.Id;
+
+                        // Update Account Balance after transaction
+                        // Debit Sender Account
+                        senderDetails.Balance -= model.TransferAmount;
+                        await UpdateUserBalanceAsync(senderId.ToString(), senderDetails.Balance);
+
+                        // Credit Receiver Account
+                        receiverDetails.Balance += convertedAmount;
+                        await UpdateUserBalanceAsync(receiverId.ToString(), receiverDetails.Balance);
+
+                        // Commit Transaction
+                        await transaction.CommitAsync();
+
+                        // Log Successful Transaction
+                        await LogTransaction(model, "Success", "Transaction completed successfully.");
+                        return Result<TransactionRequestDto>.Success("Transaction sent successfully.");
                     }
-
-                    if (senderTotalBalance == 0 || senderTotalBalance < model.TransferAmount)
+                    catch (Exception ex)
                     {
+                        await LogTransaction(model, "Failed", $"An error occurred: {ex.Message}");
                         await transaction.RollbackAsync();
-                        return Result<TransactionRequestDto>.Failure("Insufficient balance.");
+                        return Result<TransactionRequestDto>.Failure($"An error occurred while sending transaction: {ex.Message}");
                     }
-
-                    var senderCurrencyCode = account.Where(x => x.CurrencyCode == model.SenderCurrencyCode).FirstOrDefault().CurrencyCode;
-
-                    var receiverCurrencyCode = account.Where(x => x.CurrencyCode == "NPR").FirstOrDefault().CurrencyCode;
-                    var checkReceiverCurrencyCode = account.Where(x => x.CurrencyCode == receiverCurrencyCode).FirstOrDefault().CurrencyCode;
-
-                    if (checkReceiverCurrencyCode == null || checkReceiverCurrencyCode != "NPR")
-                    {
-                        await transaction.RollbackAsync();
-                        return Result<TransactionRequestDto>.Failure("User cannot send Funds");
-                    }
-
-                    var convertedAmount = model.ExchangeRate * model.TransferAmount;
-                    if (model.PayoutAmount > convertedAmount && convertedAmount == model.PayoutAmount)
-                    {
-                        await transaction.RollbackAsync();
-                        return Result<TransactionRequestDto>.Failure("Insufficient balance.");
-                    }
-
-                    // Create Transaction Entry
-                    var newTransaction = new Transaction
-                    {
-                        SenderId = senderId.ToString(),
-                        ReceiverId = receiverId.ToString(),
-                        TransferAmount = model.TransferAmount,
-                        CurrencyCode = "NPR",
-                        ExchangeRate = model.ExchangeRate,
-                        ConvertedAmount = convertedAmount,
-                        TransactionType = "Transfer",
-                        TransactionStatus = "Completed",
-                        CreatedAt = DateTime.UtcNow
-                    };
-                    await _transactionService.AddAsync(newTransaction);
-                    model.Id = newTransaction.Id;
-                    
-                    // Update Account Balance after transaction
-                    // Debit Sender Account
-                    senderDetails.Balance -= model.TransferAmount;
-                    UpdateUserBalanceAsync(senderId.ToString(), senderDetails.Balance);
-
-                    // Credit Receiver Account
-                    receiverDetails.Balance += convertedAmount;
-                    UpdateUserBalanceAsync(receiverId.ToString(), receiverDetails.Balance);
-
-                    // Commit Transaction
-                    await transaction.CommitAsync();
-
-                    // Log Successful Transaction
-                    await LogTransaction(model, "Success", "Transaction completed successfully.");
-                    return Result<TransactionRequestDto>.Success("Transaction sent Successfully.");
                 }
-                catch (Exception ex)
-                {
-                    await LogTransaction(model, "Failed", $"An error occurred: {ex.Message}");
-                    await transaction.RollbackAsync();
-                    return Result<TransactionRequestDto>.Failure($"An error occurred while sending transaction: {ex.Message}");
-                }
+            });
+            return result;
         }
 
         private async Task LogTransaction(TransactionRequestDto model, string status, string message)
@@ -396,16 +416,25 @@ namespace MoneyTransfer.Application.Services
 
             if (transaction == null)
             {
-                return null;
+                return new TransactionListDto();
             }
+
+            // Safely handle null Sender and Receiver
+            string senderName = transaction.Sender != null
+                ? $"{transaction.Sender.FirstName} {transaction.Sender.LastName}"
+                : "Unknown Sender";
+
+            string receiverName = transaction.Receiver != null
+                ? $"{transaction.Receiver.FirstName} {transaction.Receiver.LastName}"
+                : "Unknown Receiver";
 
             return new TransactionListDto
             {
                 Id = transaction.Id,
                 SenderId = transaction.SenderId,
                 CreatedAt = transaction.CreatedAt ?? DateTime.Now,
-                SenderName = transaction.Sender.FirstName + " " + transaction.Sender.LastName,
-                ReceiverName = transaction.Receiver.FirstName + " " + transaction.Receiver.LastName,
+                SenderName = senderName,
+                ReceiverName = receiverName,
                 TransferAmount = transaction.TransferAmount,
                 ConvertedAmount = transaction.ConvertedAmount,
                 TransactionType = transaction.TransactionType

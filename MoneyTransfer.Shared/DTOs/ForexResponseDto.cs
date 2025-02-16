@@ -2,20 +2,20 @@
 {
     public class ForexResponse
     {
-        public Data Data { get; set; }
+        public Data Data { get; set; } = new Data();
     }
 
     public class Data
     {
-        public List<Payload> Payload { get; set; }
+        public List<Payload>? Payload { get; set; }
     }
 
     public class Payload
     {
-        public string Date { get; set; }
-        public string PublishedOn { get; set; }
-        public string ModifiedOn { get; set; }
-        public List<Rate> Rates
+        public string? Date { get; set; }
+        public string? PublishedOn { get; set; }
+        public string? ModifiedOn { get; set; }
+        public List<Rate>? Rates
         {
             get; set;
         }
