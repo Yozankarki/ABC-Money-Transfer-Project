@@ -114,13 +114,12 @@
     <script>
         $(document).ready(function () {
             $("#TransferAmount").on("input", function () {
-                var totalBalance = parseFloat($("#SenderBalanace").val()) || 0;
+                var totalBalance = parseFloat($("#SenderBalance").val()) || 0;
                 var transferAmount = parseFloat($(this).val()) || 0;
-                var exchangeRate = parseFloat($("#ExchangeRate").val()) || 0; 
-
+                var exchangeRate = parseFloat($("#ExchangeRate").val()) || 0;
                 if (transferAmount > totalBalance) {
                     alert("Transfer amount cannot be greater than total balance.");
-                    $(this).val(totalBalance); 
+                    $(this).val(totalBalance);
                     transferAmount = totalBalance;
                 }
 
